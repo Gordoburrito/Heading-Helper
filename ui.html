@@ -1,0 +1,499 @@
+<style>
+ 
+  body {
+  font: 12px sans-serif;
+}
+button {
+  border-radius: 5px;
+  background: white;
+  color: black;
+  border: none;
+  padding: 8px 15px;
+  margin: 0 5px;
+  box-shadow: inset 0 0 0 1px black;
+  outline: none;
+}
+#create {
+  box-shadow: none;
+  background: #18A0FB;
+  color: white;
+}
+input {
+  border: none;
+  outline: none;
+  padding: 8px;
+}
+
+.field--number{
+  margin-left: -8px;
+  margin-top: -8px;
+  width: 64px;
+}
+.field--text {
+  margin-left: -8px;
+}
+
+input:hover { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1); }
+button:focus { box-shadow: inset 0 0 0 2px #18A0FB; }
+#create:focus { box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.3); }
+input:focus { box-shadow: inset 0 0 0 2px #18A0FB; }
+
+
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 100%;
+    width: 100%;
+    font-family: inter, sans-serif;
+    font-size: 12px;
+  }
+
+  .controls {
+    padding-left: 16px;
+    overflow-y: scroll;
+  }
+
+  .typographic-scale {
+    background-color: #F5F5F5;
+    border-left: solid 1px#CECECE;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .sizes {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+
+  .row, .table-row {
+    padding-left: 20px;
+    width: 400%;
+    display: grid;
+    grid-template-columns: 60px 60px 16px 60px 80px 1fr;
+    grid-column-gap: 9px;
+    align-items: center;
+/* adjusted by line-height */
+    margin-bottom: 24px;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  
+  .table-row {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  .data--right {
+    text-align:right;
+    line-height: 1px;
+  }
+
+  .data--left {
+    text-align:left;
+    line-height: 1px;
+  }
+
+  .height-x {
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  #preview {
+    background: linear-gradient(to bottom, rgba(146, 211, 238, 0.3) 1px, transparent 1px);
+    background-size: 100% 12px;
+  }
+
+  .text {
+    box-sizing: border-box;
+    border-left: 3px solid  rgba(0, 0, 0, 0.8);
+    padding-left: 16px;
+  }
+
+  .text-padding {
+    box-sizing: border-box;
+    border-left: 3px solid  rgba(0, 0, 0, 0.0);
+    padding-left: 12px;
+  }
+  #markdown {
+    resize: none;
+    height: 50%;
+    margin-bottom: 10px;
+    margin-top: 16px;
+  }
+  #spacer {
+    height: 24px;
+  }
+  #markdown-preview {
+    padding-left: 20px;
+  }
+
+  .controls__section {
+    display: flex;
+    justify-content: space-between;
+  }
+  .controls__section div {
+    padding-right: 20px;
+  }
+
+  .label, .value, .header {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.5%;
+    opacity: 0.9;
+  }
+  .label {
+    margin-bottom: 8px;
+  }
+
+  .value {
+    margin: 8px 0;
+    opacity: 0.7;
+  }
+  .checkbox {
+    margin-right: 8px;
+    margin-left: 0;
+    width: 12px;
+		height: 12px;
+  }
+
+  .checkbox--right {
+    margin-left: 8px; 
+  }
+
+  .label-checkbox {
+    display:flex;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .label-checkbox--styles{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+</style>
+
+<div class="grid-container">
+  
+  <div class="controls">
+
+    <div class="controls__section">
+      <div>
+        <p class="value">Base Size</p> <input class="field--number" type="number" min="1" id="base-size" value="18">
+        <p class="value">Scale Factor</p> <input class="field--number" type="number" step="0.05" id="scale-factor" value="1.25" min="0.05">
+      </div>
+    </div>
+
+    <p class="value">Line Height (multiple of)</p> <input class="field--number" type="number" min="1" id="line-height" value="24">
+    
+    <label class="value label-checkbox--styles ">Generate Text Styles <input id="text-styles" type="checkbox" class= "checkbox checkbox--right" onclick="hide()"></label>
+
+    <div id="show-text-styles" style="display: none">
+      <label for="fname" class= "value">Text style name</label><br>
+      <input class="field--text" type="text" id="fname" name="fname"placeholder="Roboto"><br><br>
+    </div>
+
+    <p class="value label-checkbox" ><input id="margins" type="checkbox" class= "checkbox">Margins</p>
+ 
+    <label for="markdown" class="label">Markdown</label>
+    <textarea id="markdown">
+    </textarea>
+    <button id="cancel">Cancel</button>
+    <button id="create">Create</button>
+  </div>
+  <div>
+    <div class="table-row">
+      <span class="header sizes font-size font-size-em">Font size</span>
+      <span class="header sizes font-size font-size-em"></span>
+      <span></span>
+      <span class="header sizes height height-px">Line height</span>
+      <span class="header sizes height height-px"></span>
+      <span class="headersizes text-padding example">Preview</span>
+    </div>
+    <div class="table-row">
+      <span class="header sizes data--left font-size font-size-em">%</span>
+      <span class="header sizes data--right font-size font-size-em">px</span>
+      <span></span>
+      <span class="header sizes data--left height height-px">%</span>
+      <span class="header sizes data--right height height-px">px</span>
+      <span class="sizes text-padding example"></span>
+    </div>
+    <div id="preview" class="typographic-scale">
+      <div id="spacer"></div>  
+    </div>
+    <div id="markdown-preview"></div>
+    
+  </div>
+  </div>
+
+<script>
+document.body.onload = init();
+
+function hide() {
+  var x = document.getElementById("show-text-styles");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
+function createMarkup(markdown, markdownPreview){
+  let markdownRegexp = /(\n+(?<ATXLayer>#*)\s*(?<ATXName>.+))/g;
+  let ATXResults = markdown.matchAll(markdownRegexp);
+
+  var newMarkdown = "";
+  for(let ATXResult of ATXResults) {
+    let {ATXLayer, ATXName} = ATXResult.groups;
+    let heading = ATXLayer.length
+    if (heading === 0){
+      heading = 5
+    }
+    newMarkdown += `<p class="ATX--${heading}">${ATXName}</p>`
+  }
+  markdownPreview.innerHTML = newMarkdown
+  return ATXResults
+}
+
+function buildHeadingSpecs(numRows, size, scale, height){
+  var headingSpecs = []
+  for (let i = -1; i < numRows ; i++) {
+    let pxSizeScaled = applyScaling((i), size, scale)
+    let percentageSizeScaled = applyScaling((i), 1, scale)
+    
+    var heightCount = 0
+    var heightCountCount = 0
+
+    while(heightCount < pxSizeScaled){
+      heightCount += (height/2)
+      heightCountCount += 0.5
+    }
+
+    var newHeading = {
+      "heading" : i,
+      "sizePx" : parseFloat(pxSizeScaled.toFixed(2)),
+      "sizePercentage" : (percentageSizeScaled*100).toFixed(1),
+      "heightPercentage" : ((heightCount/pxSizeScaled)*100).toFixed(1),
+      "heightPx" : (heightCount),
+      "heightCountCount" : heightCountCount,
+    }
+    headingSpecs.push(newHeading);
+  }
+  return headingSpecs
+}
+
+function init(){
+
+  const baseSizeBox = document.getElementById('base-size');
+  const scaleFactorBox = document.getElementById('scale-factor');
+  const lineHeightBox = document.getElementById('line-height');
+  const marginBox = document.getElementById('margins');
+  const textStylesBox = document.getElementById('text-styles');
+  const markdownBox = document.getElementById('markdown');
+  const folderNameBox = document.getElementById('fname');
+
+  var markdownPreview = document.getElementById("markdown-preview")
+  var preview = document.getElementById("preview");
+  var row = document.getElementsByClassName("row");
+  preview.style.cssText = `background-size: 100% ${lineHeight/4}px`
+  
+  var controls = {
+  "baseSize": 0,
+  "scaleFactor": 1.618,
+  "lineHeight": 10,
+  }
+
+  var baseSize = parseInt(baseSizeBox.value, 10);
+  var scaleFactor = parseFloat(scaleFactorBox.value, 10);
+  var lineHeight = parseInt(lineHeightBox.value, 10);
+  var markdown = markdownBox.value;
+  
+
+  createMarkup(markdown, markdownPreview);
+  
+  
+  const count = 5;
+
+  addRows(count);
+  var markdown = `\n# This supports ATXheadings\n\nLorem ipsum dolor at sim\n\n## Beetles\n\nThe body the body the body\n\n### Body\n\nthis is a part of the body\n\n#### Thorax\n\nLorem ipsum dolor at sim`
+
+  markdownBox.innerHTML= markdown
+  createMarkup(markdown, markdownPreview)
+  updateRows(count, baseSize, scaleFactor, lineHeight);
+
+  const sizeInputHandler = function (e) {
+    baseSize = parseInt(e.target.value, 10);
+    updateRows(count, baseSize, scaleFactor, lineHeight);
+    updateGrid(lineHeight, row);
+  }
+
+  const scaleInputHandler = function (e) {
+    scaleFactor = parseFloat(e.target.value, 10);
+    updateRows(count, baseSize, scaleFactor, lineHeight)
+    updateGrid(lineHeight, row);
+  }
+
+  const lineHeightInputHandler = function (e) {
+    lineHeight = parseInt(e.target.value, 10);
+    updateRows(count, baseSize, scaleFactor, lineHeight)
+    updateGrid(lineHeight, row);
+  }
+
+  const markdownInputHandler = function (e) {
+    markdown = e.target.value;
+    //this is all for UI
+    createMarkup(markdown, markdownPreview)
+    updateRows(count, baseSize, scaleFactor, lineHeight)
+  }
+
+  const marginInputHandler = function (e) {
+      updateRows(count, baseSize, scaleFactor, lineHeight)
+    }
+
+  baseSizeBox.addEventListener('input', sizeInputHandler);
+  baseSizeBox.addEventListener('propertyChange', sizeInputHandler);
+
+  scaleFactorBox.addEventListener('input', scaleInputHandler);
+  scaleFactorBox.addEventListener('propertyChange', scaleInputHandler);
+
+  lineHeightBox.addEventListener('input', lineHeightInputHandler);
+  lineHeightBox.addEventListener('propertyChange', scaleInputHandler);  
+
+  markdownBox.addEventListener('input', markdownInputHandler);
+  markdownBox.addEventListener('propertyChange', markdownInputHandler);
+
+  marginBox.addEventListener('input', marginInputHandler);
+  marginBox.addEventListener('propertChange', marginInputHandler);
+
+
+  document.getElementById('create').onclick = () => {
+    headingSpecs = buildHeadingSpecs(count, baseSize, scaleFactor, lineHeight);
+    var margins =  undefined
+    if(marginBox.checked){
+      margins = [[3,1], [2,1], [1,1], [1,1], [1,1], [1,1], [1,1]].reverse()
+    }
+    parent.postMessage({ 
+      pluginMessage: {
+        type: 'create-rectangles',
+        count ,
+        baseSize,
+        scaleFactor,
+        lineHeight: {value:lineHeight, unit:"PIXELS"},
+        "headingSpecs": headingSpecs,
+        "textStylesSelected" : textStylesBox.checked ,
+        "margins" : margins,
+        "markdown" : markdown,
+        "folderName" :  folderNameBox.value,
+        "width" : 500,
+        "gridToggle" : true,
+        "headingsToggle" : true,
+        }
+    }, '*')
+  }
+
+  document.getElementById('cancel').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+}
+}
+
+function addRow (i) {
+  const div = document.createElement("div");
+  div.className = "row";
+  div.innerHTML = `
+  <div class= "data--left"><span id="percentage-${i}" class="sizes rowElement font-size em">none</span><span class="sizes">%</span></div>
+    <div class= "data--right"><span id="px-${i}" class="sizes rowElement font-size px">none</span><span class="sizes">px</span></div>
+    <span></span>
+    <div class= "data--left"><span id="height-percentage-${i}" class="sizes rowElement height-percentage">none</span><span class="sizes">%</span></div>
+    <div id = "height-border-${i}" class= "data--right"><span id="height-px-${i}" class="sizes rowElement height px">none</div>
+    <span id="h-${i}" class="text">Lorem ipsum dolor</span>
+  `
+  document.getElementById("preview").appendChild(div)
+}
+
+function applyScaling(i, size, scale){
+  return (size*Math.pow(scale, (i)))
+}
+
+function calcHeightMatej(lineHeight, pxSizeScaled){
+    var heightCount = 0
+    var heightCountCount = 0
+    while(heightCount < pxSizeScaled){
+      heightCount += (height/2)
+      heightCountCount += 0.5;
+    }
+    return ([heightCount, heightCountCount])
+  }
+
+function updateRow (i, size, scale, height, numRows) {
+  const marginBox = document.getElementById('margins');
+  if(marginBox.checked){
+    var marge = [[3,1], [2,1], [1,1], [1,1], [1,1]].reverse();
+    }
+
+  percentage = document.getElementById(`percentage-${i}`);
+  px = document.getElementById(`px-${i}`);
+  heightPixels = document.getElementById(`height-px-${i}`);
+  heightPercentage = document.getElementById(`height-percentage-${i}`);
+  borderHeight = document.getElementById(`height-border-${i})`);
+  h = document.getElementById(`h-${i}`);
+
+  let pxSizeScaled = applyScaling((i), size, scale)
+  let percentageSizeScaled = applyScaling((i), 1, scale)
+
+  var heightCount = 0
+  var heightCountCount = 0
+  while(heightCount < pxSizeScaled){
+    heightCount += (height/2)
+    heightCountCount += 0.5
+  }
+
+
+  h.style.cssText = `font-size: ${pxSizeScaled}px; line-height: ${heightCount}px; height: ${heightCount}`
+  percentage.textContent = `${(percentageSizeScaled*100).toFixed(1)}`
+  px.textContent = `${pxSizeScaled.toFixed(2)}`
+  heightPercentage.textContent = `${((heightCount/pxSizeScaled)*100).toFixed(1)}`
+  heightPixels.innerHTML = `<span class="height-x">${heightCountCount}x</span> (${heightCount}px)`
+
+  ATX = document.getElementsByClassName(`atx--${numRows-i}`);
+
+  
+  for (let k = 0; k < ATX.length; k++){
+    if(marge && i <= 5){
+      ATX[k].style.cssText = `font-size: ${pxSizeScaled}px; line-height: ${heightCount}px; margin: ${marge[i][0] * height}px 0 ${marge[i][1] * height}px;`;
+    } else {
+      ATX[k].style.cssText = `font-size: ${pxSizeScaled}px; line-height: ${heightCount}px; margin: ${height}px 0; `;
+    }
+  }
+}
+
+function updateGrid(lineHeight, row){
+    var preview = document.getElementById("preview");
+    var spacer = document.getElementById("spacer");
+    preview.style.cssText = `background-size: 100% ${lineHeight/2}px`;
+
+    spacer.style.cssText = `height: ${lineHeight}px`;
+    for (var k = 0; k < row.length; k++) {
+      row[k].style.cssText = `margin-bottom: ${(lineHeight)}px`  
+    }
+  }
+
+// smallest first 
+//reverse order below
+// made change for proximity to the units in the header
+
+function addRows(numRows){
+  for (let i = -1; i < numRows ; i++) {
+    addRow(i)
+  }
+}
+
+function updateRows(numRows, size, scale, height){
+  for (let i = -1; i < numRows ; i++) {
+    updateRow(i, size, scale, height, numRows)
+  }
+}
+</script>
